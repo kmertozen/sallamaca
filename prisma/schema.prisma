@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  roomCode  String
+  createdAt DateTime @default(now())
+  feedbacks FeedbackGiven[]    @relation("FeedbackGiver")
+  received  FeedbackReceived[] @relation("FeedbackReceiver")
+}
+
+model FeedbackGiven {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  fromUser   User     @relation("FeedbackGiver", fields: [fromUserId], references: [id])
+  fromUserId Int
+  toUserId   Int
+}
+
+model FeedbackReceived {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  toUser     User     @relation("FeedbackReceiver", fields: [toUserId], references: [id])
+  toUserId   Int
+  fromUserId Int
+} 
